@@ -9,11 +9,9 @@ use blp::BlpError as BlpLibError;
 use eframe::egui::{Context, RawInput, TextureHandle};
 use std::path::PathBuf;
 use std::sync::mpsc::Receiver;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 pub struct App {
     pub lng: LngList,
-    pub bg_seed: u64,
     pub maximized: bool,
     pub picked_file: Option<PathBuf>,
     pub loading: bool,
@@ -29,11 +27,6 @@ pub struct App {
 
 impl App {
     pub fn new(ctx: &Context) -> Self {
-        let nanos = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap_or_else(|_| Duration::from_secs(0))
-            .as_nanos();
-
         // 1) Ставим шрифты ДО первого кадра
         install_fonts(ctx);
 
@@ -44,7 +37,6 @@ impl App {
         Self {
             lng: load_prefs().lang,
             maximized: false, //
-            bg_seed: (nanos as u64) ^ ((nanos >> 64) as u64),
             picked_file: None,
             decode_rx: None,
             loading: false,

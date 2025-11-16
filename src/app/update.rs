@@ -1,8 +1,4 @@
 pub(crate) use crate::app::app::App;
-#[allow(unused_imports)]
-use crate::ui::viewer::layout::resize_corner_br::resize_corner_br;
-use crate::ui::viewer::theme::apply_style::apply_style;
-use crate::ui::viewer::theme::paint_bg_neon_maze::paint_bg_neon_maze;
 use eframe::egui::{self};
 
 impl eframe::App for App {
@@ -18,10 +14,6 @@ impl eframe::App for App {
             }
         }
 
-        apply_style(ctx);
-        paint_bg_neon_maze(ctx, self.bg_seed);
-        self.draw_title_bar(ctx);
-        self.draw_footer(ctx);
         self.draw_file_picker(ctx);
         if self.blp.is_some() || self.loading {
             self.draw_panel_left(ctx);
@@ -29,8 +21,5 @@ impl eframe::App for App {
             self.draw_panel_center(ctx);
         }
         self.poll_decoder(ctx);
-
-        #[cfg(not(target_os = "macos"))]
-        resize_corner_br(ctx);
     }
 }

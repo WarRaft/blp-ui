@@ -12,8 +12,17 @@ impl App {
             return Ok(()); // ничего не выбрано
         };
 
+        // Проверяем, что путь доступен для чтения
         path.as_path().ensure_readable()?;
 
+        // Если это директория, обрабатываем как папку
+        if path.is_dir() {
+            // TODO: Implement directory scanning for BLP files
+            return Err(UiError::new("directory-not-supported")
+                .with_arg("path", path.display().to_string()));
+        }
+
+        // Обрабатываем как файл
         self.picked_file = Some(path.clone());
         self.blp = None;
         self.mip_textures.fill_with(|| None);

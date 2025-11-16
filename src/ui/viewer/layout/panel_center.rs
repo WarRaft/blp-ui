@@ -1,5 +1,5 @@
 use crate::app::app::App;
-use eframe::egui::{self, Align, CentralPanel, Frame, Image, Label, Layout, Margin, RichText, ScrollArea, Sense, vec2};
+use eframe::egui::{self, Align, CentralPanel, Frame, Image, Layout, Margin, RichText, ScrollArea, Sense, vec2};
 
 impl App {
     pub(crate) fn draw_panel_center(&mut self, ctx: &egui::Context) {
@@ -38,47 +38,28 @@ impl App {
                                 .unwrap_or((0, 0));
 
                             // внешний горизонтальный паддинг
-                            Frame { inner_margin: Margin { left: pad_lr, right: pad_lr, top: 0, bottom: 0 }, ..Default::default() }.show(ui, |ui| {
+                            Frame::default().inner_margin(Margin { left: pad_lr, right: pad_lr, top: 0, bottom: 0 }).show(ui, |ui| {
                                 let title = format!("#{i:02} {w}×{h}");
 
-                                // ширина правого текста (моно)
-                                let right_w = ui.fonts_mut(|f| {
-                                    let style = egui::TextStyle::Monospace.resolve(ui.style());
-                                    let galley = f.layout_no_wrap(title.clone(), style, ui.style().visuals.text_color());
-                                    galley.size().x
-                                });
-
-                                ui.with_layout(Layout::left_to_right(Align::Min), |ui| {
-                                    let spacing = ui.spacing().item_spacing.x;
-                                    let left_w = (ui.available_width() - right_w - spacing).max(0.0);
-
+                                ui.horizontal(|ui| {
                                     let noim = RichText::new(self.tr("no-image"));
 
-                                    // Левый блок
-                                    ui.allocate_ui_with_layout(vec2(left_w, 0.0), Layout::top_down(Align::Min), |ui| {
-                                        if let Some(tex) = &tex_opt {
-                                            let tex_size = tex.size_vec2();
-                                            if tex_size.x > 0.0 && tex_size.y > 0.0 && left_w > 0.0 {
-                                                let draw_w = left_w.min(tex_size.x);
-                                                let draw_h = draw_w * (tex_size.y / tex_size.x);
-                                                ui.add(Image::from_texture((tex.id(), tex_size)).fit_to_exact_size(vec2(draw_w, draw_h)));
-                                            } else {
-                                                ui.label(noim.clone());
-                                            }
+                                    if let Some(tex) = &tex_opt {
+                                        let tex_size = tex.size_vec2();
+                                        if tex_size.x > 0.0 && tex_size.y > 0.0 {
+                                            let avail_w = ui.available_width();
+                                            let draw_w = avail_w.min(tex_size.x);
+                                            let draw_h = draw_w * (tex_size.y / tex_size.x);
+                                            ui.add(Image::from_texture((tex.id(), tex_size)).fit_to_exact_size(vec2(draw_w, draw_h)));
                                         } else {
                                             ui.label(noim.clone());
                                         }
-                                    });
-
-                                    // спейсер
-                                    let rem = ui.available_width();
-                                    if rem > right_w {
-                                        ui.add_space(rem - right_w);
+                                    } else {
+                                        ui.label(noim.clone());
                                     }
 
-                                    // Правый блок
                                     ui.with_layout(Layout::right_to_left(Align::Min), |ui| {
-                                        ui.add(Label::new(RichText::new(title).monospace()).truncate());
+                                        ui.label(RichText::new(title).monospace());
                                     });
                                 });
                             });

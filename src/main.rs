@@ -2,12 +2,13 @@ pub mod app;
 mod error;
 mod ext;
 mod ui;
+mod paint_bg_maze;
 
 use crate::error::UiError;
 use app::app::App;
 use blp::image;
 use eframe::egui::{IconData, ViewportBuilder, vec2};
-use eframe::{NativeOptions, Renderer};
+use eframe::NativeOptions;
 use std::path::PathBuf;
 use std::sync::Arc;
 
@@ -28,24 +29,15 @@ fn run_native(path: Option<PathBuf>) -> Result<(), UiError> {
     eframe::run_native(
         "blp",
         NativeOptions {
-            persist_window: true, //
-            viewport: ViewportBuilder {
-                title: Some("blp".to_string()), //
-                app_id: Some("org.warraft.blp".to_string()),
-                inner_size: Some(vec2(800.0, 680.0)),
-                clamp_size_to_monitor_size: Some(true),
-                decorations: Some(false),
-                resizable: Some(true),
-                icon: Some(Arc::new({
+            viewport: ViewportBuilder::default()
+                .with_title("blp")
+                .with_app_id("org.warraft.blp")
+                .with_inner_size(vec2(800.0, 680.0))
+                .with_icon(Arc::new({
                     let img = image::load_from_memory(include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/icon.png")))?.into_rgba8();
                     let (w, h) = img.dimensions();
                     IconData { rgba: img.into_raw(), width: w, height: h }
                 })),
-                has_shadow: Some(true),
-                ..Default::default()
-            },
-            renderer: Renderer::Wgpu,
-            vsync: true,
             ..Default::default()
         },
         Box::new(move |cc| -> Result<Box<dyn eframe::App>, _> {

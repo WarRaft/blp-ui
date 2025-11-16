@@ -1,6 +1,7 @@
 use eframe::egui::{epaint::Shape, *};
 
-pub fn paint_bg_neon_maze(ctx: &Context, seed: u64) {
+#[allow(dead_code)]
+pub fn paint_bg_maze(ctx: &Context, seed: u64) {
     let painter = ctx.layer_painter(LayerId::background());
     let rect = ctx.content_rect();
 

@@ -32,9 +32,12 @@ fn save_last_open_dir(dir: &Path) {
 impl App {
     pub(crate) fn file_dialog_open(&mut self) {
         let mut dlg = rfd::FileDialog::new()
-            .set_title(self.tr("select-image"))
-            .add_filter(self.tr("filter-all-images"), all_image_exts());
+            .set_title(self.tr("select-image"));
 
+        // Добавляем фильтр для картинок
+        dlg = dlg.add_filter(self.tr("filter-all-images"), all_image_exts());
+
+        // Устанавливаем начальную директорию
         if let Some(dir) = load_last_open_dir()
             .or_else(platform_desktop)
             .or_else(|| std::env::current_dir().ok())
@@ -42,10 +45,13 @@ impl App {
             dlg = dlg.set_directory(dir);
         }
 
+        // Пытаемся выбрать файл
         if let Some(path) = dlg.pick_file() {
+            // Сохраняем директорию для следующего открытия
             if let Some(parent) = path.parent() {
                 save_last_open_dir(parent);
             }
+
             if let Err(e) = self.pick_from_file(Some(path)) {
                 self.error = Some(e);
             }
