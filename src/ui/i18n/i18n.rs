@@ -1,4 +1,4 @@
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use fluent_templates::fluent_bundle::{FluentArgs, FluentValue};
 use fluent_templates::{Loader, static_loader};
 use std::borrow::Cow;

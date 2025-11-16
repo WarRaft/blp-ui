@@ -1,9 +1,7 @@
 use crate::ext::path::to_abs_string_with_macros::PathMacrosExt;
-use crate::flargs;
-use crate::ui::i18n::shortcut::platform_cmd_shortcut;
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use crate::ui::viewer::layout::file_picker::hotkey_pressed::hotkey_pressed;
-use crate::ui::widget::text_edit_ex::TextEditLikeButtonChain;
+use crate::ui::i18n::shortcut::platform_cmd_shortcut;
 use eframe::egui::text::{LayoutJob, TextWrapping};
 use eframe::egui::{Align, Button, Color32, Context, CornerRadius, CursorIcon, Frame, Galley, Key, Layout, Margin, Sense, Stroke, StrokeKind, TextEdit, TextFormat, TopBottomPanel, pos2, vec2};
 
@@ -43,7 +41,7 @@ impl App {
                         // Open
                         if ui
                             .add(Button::new(self.tr("open")))
-                            .on_hover_text(self.tr_args("open-hint", &flargs!(shortcut = platform_cmd_shortcut("O"))))
+                            .on_hover_text(format!("{}\n{}", self.tr("open-hint"), platform_cmd_shortcut("O")))
                             .on_hover_cursor(CursorIcon::PointingHand)
                             .clicked()
                         {
@@ -55,7 +53,7 @@ impl App {
                         // Paste
                         if ui
                             .add(Button::new(self.tr("paste")))
-                            .on_hover_text(self.tr_args("paste-hint", &flargs!(shortcut = platform_cmd_shortcut("V"))))
+                            .on_hover_text(format!("{}\n{}", self.tr("paste-hint"), platform_cmd_shortcut("V")))
                             .on_hover_cursor(CursorIcon::PointingHand)
                             .clicked()
                         {
@@ -75,7 +73,7 @@ impl App {
                             TextEdit::singleline(&mut s)
                                 .cursor_at_end(true)
                                 .desired_width(w)
-                                .like_button(),
+                                .interactive(false),
                         );
                     } else {
                         use std::sync::Arc;

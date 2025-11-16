@@ -1,13 +1,13 @@
 use crate::ui::viewer::layout::file_picker::file_pick_input::FilePickInput;
-use crate::error::error::BlpError;
+use crate::error::UiError;
 use crate::ext::path::ensure_readable::EnsureReadable;
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use std::path::PathBuf;
 use std::sync::mpsc;
 use std::thread;
 
 impl App {
-    pub(crate) fn pick_from_file(&mut self, path: Option<PathBuf>) -> Result<(), BlpError> {
+    pub(crate) fn pick_from_file(&mut self, path: Option<PathBuf>) -> Result<(), UiError> {
         let Some(path) = path else {
             return Ok(()); // ничего не выбрано
         };

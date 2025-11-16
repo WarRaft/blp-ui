@@ -1,7 +1,7 @@
 use eframe::egui::text::{LayoutJob, TextFormat};
 use eframe::egui::{Align2, Area, Color32, Context, FontId, Order, Spinner, vec2};
 
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 
 impl App {
     /// Рисует оверлей со спиннером и анимированными точками "Decoding"

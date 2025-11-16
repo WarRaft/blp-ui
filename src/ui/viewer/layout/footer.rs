@@ -1,12 +1,12 @@
 use crate::ui::i18n::lng_list::LngList;
 use crate::ui::i18n::prefs::save_lang;
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use eframe::egui::{Align, Color32, ComboBox, Context, CursorIcon, Frame, Label, Layout, Margin, RichText, ScrollArea, Stroke, TopBottomPanel};
 
 impl App {
     pub(crate) fn draw_footer(&mut self, ctx: &Context) {
         if let Some(err) = &self.error {
-            let plain = self.err_text_localized(err);
+            let plain = format!("{}", err);
 
             TopBottomPanel::bottom("footer_error")
                 .resizable(true)

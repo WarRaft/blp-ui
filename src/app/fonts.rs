@@ -2,11 +2,6 @@ use eframe::egui::{Context, FontFamily};
 use eframe::epaint::text::{FontData, FontDefinitions};
 use std::sync::Arc;
 
-// === Direct TTF embedding from repository ===
-// These constants embed the raw font files into the binary at compile time.
-// Paths are relative to the crate root, which makes this approach reliable
-// across different build environments (cargo, build.rs, etc.).
-const JB_MONO_REG: &[u8] = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/fonts/JetBrainsMono-Regular.ttf"));
 const WENKAI_SC_REG: &[u8] = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/fonts/LXGWWenKaiMono-Regular.ttf"));
 const WENKAI_TC_REG: &[u8] = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/fonts/LXGWWenKaiMonoTC-Regular.ttf"));
 
@@ -48,7 +43,6 @@ fn push_front_both(defs: &mut FontDefinitions, name: &str) {
 ///
 /// ### Priority order
 /// The intended fallback chain is:
-/// - **JetBrains Mono** → primary Latin/Cyrillic font
 /// - **WenKai TC** → Traditional Chinese fallback
 /// - **WenKai SC** → Simplified Chinese fallback
 ///
@@ -59,14 +53,12 @@ pub fn install_fonts(ctx: &Context) {
     let mut defs = FontDefinitions::default();
 
     // 1) Register embedded fonts
-    insert_static(&mut defs, "JetBrainsMono-Regular", JB_MONO_REG);
     insert_static(&mut defs, "LXGWWenKaiMonoTC-Regular", WENKAI_TC_REG);
     insert_static(&mut defs, "LXGWWenKaiMono-Regular", WENKAI_SC_REG);
 
     // 2) Adjust fallback order: SC → TC → JB
     push_front_both(&mut defs, "LXGWWenKaiMono-Regular"); // SC
     push_front_both(&mut defs, "LXGWWenKaiMonoTC-Regular"); // TC
-    push_front_both(&mut defs, "JetBrainsMono-Regular"); // JB (final priority: JB → TC → SC)
 
     // 3) Apply fonts to the `egui` context
     ctx.set_fonts(defs);

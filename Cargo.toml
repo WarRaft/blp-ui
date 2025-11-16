@@ -56,15 +56,3 @@ codegen-units = 1
 opt-level = "z"
 strip = "symbols"
 panic = "abort"   # опционально; если мешает mozjpeg, закомментируй или ставь "unwind"
-[features]
-default = []
-cli = ["dep:clap"]
-ui = [
-    "dep:arboard",
-    "dep:confy",
-    "dep:directories",
-    "dep:eframe",
-    "dep:rfd",
-    "dep:serde",
-    "dep:sys-locale",
-]

@@ -1,4 +1,4 @@
-pub(crate) use crate::ui::viewer::app::App;
+pub(crate) use crate::app::app::App;
 #[allow(unused_imports)]
 use crate::ui::viewer::layout::resize_corner_br::resize_corner_br;
 use crate::ui::viewer::theme::apply_style::apply_style;

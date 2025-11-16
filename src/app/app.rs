@@ -1,10 +1,11 @@
-use crate::core::image::{ImageBlp, MAX_MIPS};
-use crate::error::error::BlpError;
-use crate::ui::fonts::install_fonts;
+use crate::error::UiError;
+use crate::app::fonts::install_fonts;
 use crate::ui::i18n::lng_list::LngList;
 use crate::ui::i18n::prefs::load_prefs;
 use crate::ui::viewer::layout::file_saver::export_quality::export_quality_load;
 use crate::ui::viewer::layout::file_saver::save_same_dir::save_same_dir_load;
+use blp::{AnyImage, Blp};
+use blp::BlpError as BlpLibError;
 use eframe::egui::{Context, RawInput, TextureHandle};
 use std::path::PathBuf;
 use std::sync::mpsc::Receiver;
@@ -16,11 +17,12 @@ pub struct App {
     pub maximized: bool,
     pub picked_file: Option<PathBuf>,
     pub loading: bool,
-    pub error: Option<BlpError>, // один корень ошибки
-    pub blp: Option<ImageBlp>,
+    pub error: Option<UiError>, // один корень ошибки
+    pub image: Option<AnyImage>,
+    pub blp: Option<Blp>,
     pub mip_textures: Vec<Option<TextureHandle>>, // len == 16
-    pub decode_rx: Option<Receiver<Result<ImageBlp, BlpError>>>,
-    pub mip_visible: [bool; MAX_MIPS], // init: [true; 16]
+    pub decode_rx: Option<Receiver<Result<AnyImage, BlpLibError>>>,
+    pub mip_visible: [bool; 16], // init: [true; 16]
     pub save_same_dir: bool,
     pub export_quality: u8,
 }
@@ -47,9 +49,10 @@ impl App {
             decode_rx: None,
             loading: false,
             error: None,
+            image: None,
             blp: None,
-            mip_textures: vec![None; MAX_MIPS],
-            mip_visible: [true; MAX_MIPS],
+            mip_textures: vec![None; 16],
+            mip_visible: [true; 16],
             save_same_dir: save_same_dir_load(),
             export_quality: export_quality_load(),
         }

@@ -1,4 +1,4 @@
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use eframe::egui::{Align, Color32, Context, CursorIcon, FontId, Frame, Layout, Pos2, Response, Sense, Shape, Stroke, TopBottomPanel, Ui, Vec2, ViewportCommand};
 
 impl App {

@@ -1,5 +1,5 @@
 use crate::ext::path::to_abs_string_with_macros::PathMacrosExt;
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use crate::ui::viewer::layout::file_saver::last_safe_dir::{last_save_dir_load, last_save_dir_save};
 use std::path::PathBuf;
 

@@ -1,4 +1,4 @@
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use crate::ui::viewer::layout::file_picker::all_image_exts::all_image_exts;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};

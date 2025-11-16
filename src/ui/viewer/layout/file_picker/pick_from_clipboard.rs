@@ -1,9 +1,9 @@
 use crate::ui::viewer::layout::file_picker::file_pick_input::FilePickInput;
-use crate::error::error::BlpError;
-use crate::ui::viewer::app::App;
+use crate::error::UiError;
+use crate::app::app::App;
 
 impl App {
-    pub(crate) fn pick_from_clipboard(&mut self) -> Result<(), BlpError> {
+    pub(crate) fn pick_from_clipboard(&mut self) -> Result<(), UiError> {
         // ---------- macOS: file:// из Finder ----------
         #[cfg(target_os = "macos")]
         {
@@ -17,18 +17,18 @@ impl App {
 
         // ---------- bitmap через arboard ----------
         use arboard::Clipboard;
-        use image::{DynamicImage, ImageFormat};
+        use blp::image::{DynamicImage, ImageFormat};
         use std::io::Cursor;
         use std::sync::mpsc;
         use std::thread;
 
         // init буфера обмена
-        let mut cb = Clipboard::new().map_err(|e| BlpError::new("error-clipboard-init-failed").push_std(e))?;
+    let mut cb = Clipboard::new().map_err(|e| UiError::new("error-clipboard-init-failed").push_std(e))?;
 
         // получаем RGBA-данные из буфера
         let img = cb
             .get_image()
-            .map_err(|e| BlpError::new("error-clipboard-no-image").push_std(e))?;
+            .map_err(|e| UiError::new("error-clipboard-no-image").push_std(e))?;
 
         let w = img.width as u32;
         let h = img.height as u32;
@@ -42,8 +42,8 @@ impl App {
         }
 
         // собираем RgbaImage (проверяем валидность буфера)
-        let rgba_img = image::RgbaImage::from_raw(w, h, rgba).ok_or_else(|| {
-            BlpError::new("error-clipboard-invalid-image-buffer")
+        let rgba_img = blp::RgbaImage::from_raw(w, h, rgba).ok_or_else(|| {
+            UiError::new("error-clipboard-invalid-image-buffer")
                 .with_arg("width", w)
                 .with_arg("height", h)
         })?;
@@ -53,7 +53,7 @@ impl App {
         let mut buf = Vec::new();
         dyn_img
             .write_to(&mut Cursor::new(&mut buf), ImageFormat::Png)
-            .map_err(|e| BlpError::new("error-clipboard-encode-png-failed").push_std(e))?;
+            .map_err(|e| UiError::new("error-clipboard-encode-png-failed").push_std(e))?;
 
         // Сброс состояния + запуск декодера
         self.picked_file = None;

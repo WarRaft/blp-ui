@@ -1,5 +1,4 @@
-use crate::core::image::MAX_MIPS;
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use eframe::egui::{self, Align, CentralPanel, Frame, Image, Label, Layout, Margin, RichText, ScrollArea, Sense, vec2};
 
 impl App {
@@ -28,23 +27,15 @@ impl App {
 
                         ui.add_space(spy * 2.0);
                         let pad_lr: i8 = ui.spacing().item_spacing.x.round() as i8;
-                        for i in 0..MAX_MIPS {
+                        for i in 0..16 {
                             if !self.mip_visible[i] {
                                 continue;
                             }
 
-                            let (w, h) = self
-                                .blp
-                                .as_ref()
-                                .and_then(|b| b.mipmaps.get(i))
-                                .map(|m| (m.width, m.height))
+                            let tex_opt = self.mip_textures.get(i).cloned().flatten();
+                            let (w, h) = tex_opt.as_ref()
+                                .map(|t| (t.size()[0] as u32, t.size()[1] as u32))
                                 .unwrap_or((0, 0));
-
-                            let tex_opt = self
-                                .mip_textures
-                                .get(i)
-                                .cloned()
-                                .flatten();
 
                             // внешний горизонтальный паддинг
                             Frame { inner_margin: Margin { left: pad_lr, right: pad_lr, top: 0, bottom: 0 }, ..Default::default() }.show(ui, |ui| {

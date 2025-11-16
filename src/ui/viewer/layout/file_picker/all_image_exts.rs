@@ -1,4 +1,4 @@
-use image::ImageFormat;
+use blp::image::ImageFormat;
 use std::collections::BTreeSet;
 use std::sync::OnceLock;
 

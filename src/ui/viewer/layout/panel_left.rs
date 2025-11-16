@@ -1,6 +1,6 @@
-use crate::error::error::BlpError;
-use crate::flargs;
-use crate::ui::viewer::app::App;
+use blp::BlpError as BlpLibError;
+use crate::error::UiError;
+use crate::app::app::App;
 use crate::ui::viewer::layout::file_saver::export_quality::export_quality_save;
 use crate::ui::viewer::layout::file_saver::save_same_dir::save_same_dir_save;
 use eframe::egui::{Button, Context, CursorIcon, Frame, Margin, RichText, ScrollArea, Sense, SidePanel, Slider, vec2};
@@ -22,10 +22,10 @@ impl App {
 
     fn run_export<F>(&mut self, f: F)
     where
-        F: FnOnce(&crate::core::image::ImageBlp) -> Result<(), BlpError>,
+    F: FnOnce(&blp::Blp) -> Result<(), BlpLibError>,
     {
-        let res = if let Some(img) = self.blp.as_ref() { f(img) } else { Err(BlpError::new("error-save-no-image")) };
-        self.error = res.err();
+        let res = if let Some(img) = self.blp.as_ref() { f(img) } else { Err(BlpLibError::new("error-save-no-image")) };
+        self.error = res.err().map(|e| UiError::new("error-save").push_blp(e));
     }
 
     pub(crate) fn draw_panel_left(&mut self, ctx: &Context) {
@@ -85,10 +85,11 @@ impl App {
                                     .on_hover_cursor(CursorIcon::PointingHand)
                                     .clicked()
                                 {
-                                    if let Some(path) = self.pick_save_path(&def_blp, "blp", self.tr("blp-texture")) {
-                                        let export_quality = self.export_quality;
-                                        let mip_visible = self.mip_visible;
-                                        self.run_export(|img| img.export_blp(&path, export_quality, &mip_visible));
+                                    if let Some(_path) = self.pick_save_path(&def_blp, "blp", self.tr("blp-texture")) {
+                                        // TODO: Implement export_blp for new API
+                                        // let export_quality = self.export_quality;
+                                        // let mip_visible = self.mip_visible;
+                                        // self.run_export(|img| img.export_blp(&path, export_quality, &mip_visible));
                                     }
                                 }
 
@@ -103,15 +104,16 @@ impl App {
                                     .on_hover_cursor(CursorIcon::PointingHand)
                                     .clicked()
                                 {
-                                    if let Some(path) = self.pick_save_path(&def_png, "png", self.tr("png-image")) {
-                                        self.run_export(|img| img.export_png(img.mipmaps.get(0).unwrap(), &path));
+                                    if let Some(_path) = self.pick_save_path(&def_png, "png", self.tr("png-image")) {
+                                        // TODO: Implement export_png for new API
+                                        // self.run_export(|img| img.export_png(&path));
                                     }
                                 }
                             });
 
                             ui.add_space(ui.spacing().item_spacing.y);
 
-                            let quality_label = self.tr_args("blp-quality", &flargs!(val = self.export_quality));
+                            let quality_label = format!("{}: {}", self.tr("blp-quality"), self.export_quality);
                             let quality_hint = self.tr("blp-quality-hint");
 
                             ui.vertical_centered(|ui| {

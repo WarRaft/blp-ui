@@ -1,5 +1,4 @@
-use crate::core::image::MAX_MIPS;
-use crate::ui::viewer::app::App;
+use crate::app::app::App;
 use eframe::egui::{Button, Context, CursorIcon, Frame, Margin, Response, RichText, ScrollArea, Sense, SidePanel, TextStyle, Ui, vec2};
 
 impl App {
@@ -21,12 +20,10 @@ impl App {
                         Frame { inner_margin: Margin { left: spx_i, right: spx_i, top: 0, bottom: 0 }, ..Default::default() }.show(ui, |ui| {
                             ui.add_space(spy_f * 2.0);
                             ui.add_enabled_ui(!self.loading, |ui| {
-                                for i in 0..MAX_MIPS {
-                                    let (w, h) = self
-                                        .blp
-                                        .as_ref()
-                                        .and_then(|b| b.mipmaps.get(i))
-                                        .map(|m| (m.width, m.height))
+                                for i in 0..16 {
+                                    let (w, h) = self.mip_textures.get(i)
+                                        .and_then(|t| t.as_ref())
+                                        .map(|t| (t.size()[0] as u32, t.size()[1] as u32))
                                         .unwrap_or((0, 0));
 
                                     mipmap_button_row(ui, &mut self.mip_visible[i], i, w, h);
